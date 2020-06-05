@@ -32,12 +32,12 @@ canonifyurls = true
   archive = "archives"
 
 [author]
-  name = "Firstname Lastname"
+  name = "Mohammed Hafrate"
   bio = "Super bio with markdown support **COOL**"
-  job = "Your job title"
-  location = "France"
+  job = "Data Lover"
+  location = "Maroc"
   # Your Gravatar email. Overwrite `author.picture` everywhere in the blog
-  gravatarEmail = "thibaud.lepretre@gmail.com"
+  gravatarEmail = "hafrate@gmail.com"
   # Your profile picture
   # Overwritten by your gravatar image if `author.gravatarEmail` is filled
   picture = "https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png"
