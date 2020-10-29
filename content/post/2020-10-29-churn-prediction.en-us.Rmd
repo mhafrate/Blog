@@ -1,12 +1,15 @@
 ---
-title: Churn Prediction
-author: Mohammed Hafrate
+title: "Churn Prediction"
+author: "Mohammed Hafrate"
 date: '2020-10-29'
+keywords: tech
 slug: churn-prediction.en-us
-categories: ["R"]
-tags: ["R", "machine learning", "predictive analytics", "customer churn"]
-keywords:
-  - tech
+tags:
+- R
+- machine learning
+- predictive analytics
+- customer churn
+categories: R
 ---
 
 ```{r setup, include=FALSE}
@@ -36,18 +39,9 @@ All figures are produced with ggplot2.
 
 ```{r}
 # Load libraries
-library(tidyverse) # for tidy data analysis
-library(readr)     # for fast reading of input files
-library(caret)     # for convenient splitting
-library(mice)      # mice package for Multivariate Imputation by Chained Equations (MICE)
-library(keras)     # for neural nets
-library(lime)      # for explaining neural nets
-library(rsample)   # for splitting training and test data
-library(recipes)   # for preprocessing
-library(yardstick) # for evaluation
-library(ggthemes)  # for additional plotting themes
-library(corrplot)  # for correlation
-theme_set(theme_minimal())
+#library(tidyverse) # for tidy data analysis
+#library(readr)     # for fast reading of input files
+#library(caret)     # for convenient splitting
+
 ```
 
-<!--more-->
