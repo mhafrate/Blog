@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.72.0 with theme Tranquilpeak 0.4.8-BETA">
+<meta name="author" content="Mohammed Hafrate">
+<meta name="keywords" content="">
+<meta name="description" content="knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)This is code that accompanies a book chapter on customer churn that I have written for the German dpunkt Verlag. The book is in German and will probably appear in February: https://www.dpunkt.de/buecher/13208/9783864906107-data-science.html.
+The code you find below can be used to recreate all figures and analyses from this book chapter. Because the content is exclusively for the book, my descriptions around the code had to be minimal.">
+
+
+<meta property="og:description" content="knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)This is code that accompanies a book chapter on customer churn that I have written for the German dpunkt Verlag. The book is in German and will probably appear in February: https://www.dpunkt.de/buecher/13208/9783864906107-data-science.html.
+The code you find below can be used to recreate all figures and analyses from this book chapter. Because the content is exclusively for the book, my descriptions around the code had to be minimal.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Code for case study - Customer Churn with Keras/TensorFlow and H2O">
+<meta name="twitter:title" content="Code for case study - Customer Churn with Keras/TensorFlow and H2O">
+<meta property="og:url" content="/2018/12/customer_churn_code/">
+<meta property="twitter:url" content="/2018/12/customer_churn_code/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)This is code that accompanies a book chapter on customer churn that I have written for the German dpunkt Verlag. The book is in German and will probably appear in February: https://www.dpunkt.de/buecher/13208/9783864906107-data-science.html.
+The code you find below can be used to recreate all figures and analyses from this book chapter. Because the content is exclusively for the book, my descriptions around the code had to be minimal.">
+<meta name="twitter:description" content="knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)This is code that accompanies a book chapter on customer churn that I have written for the German dpunkt Verlag. The book is in German and will probably appear in February: https://www.dpunkt.de/buecher/13208/9783864906107-data-science.html.
+The code you find below can be used to recreate all figures and analyses from this book chapter. Because the content is exclusively for the book, my descriptions around the code had to be minimal.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2018-12-12T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2018-12-12T00:00:00">
+  
+  
+  
+    
+      <meta property="article:section" content="R">
+    
+  
+  
+    
+      <meta property="article:tag" content="R">
+    
+      <meta property="article:tag" content="machine learning">
+    
+      <meta property="article:tag" content="predictive analytics">
+    
+      <meta property="article:tag" content="customer churn">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="/post/2018-12-12_customer_churn_code_files/figure-html/prop_table-1.png">
+  <meta property="twitter:image" content="/post/2018-12-12_customer_churn_code_files/figure-html/prop_table-1.png">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/1c2527915ec7df269dcf5b55c7c0ae5a?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/1c2527915ec7df269dcf5b55c7c0ae5a?s=640">
+
+
+    <title>Code for case study - Customer Churn with Keras/TensorFlow and H2O</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="/2018/12/customer_churn_code/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/1c2527915ec7df269dcf5b55c7c0ae5a?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/1c2527915ec7df269dcf5b55c7c0ae5a?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Mohammed Hafrate</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaOut
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-center">
+  
+    <h1 class="post-title" itemprop="headline">
+      Code for case study - Customer Churn with Keras/TensorFlow and H2O
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-12-12T00:00:00Z">
+        
+  December 12, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="/categories/r">R</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <pre><code class="language-{r" data-lang="{r">knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+</code></pre><p>This is code that accompanies a <a href="https://www.dpunkt.de/buecher/13208/9783864906107-data-science.html">book</a> chapter on customer churn that I have written for the German dpunkt Verlag. The book is in German and will probably appear in February: <a href="https://www.dpunkt.de/buecher/13208/9783864906107-data-science.html">https://www.dpunkt.de/buecher/13208/9783864906107-data-science.html</a>.</p>
+<p>The code you find below can be used to recreate all figures and analyses from this book chapter. Because the content is exclusively for the book, my descriptions around the code had to be minimal. But I&rsquo;m sure, you can get the gist, even without the book. ;-)</p>
+<h1 id="inspiration--sources">Inspiration &amp; Sources</h1>
+<p>Thank you to the following people for providing excellent code examples about customer churn:</p>
+<ul>
+<li>Matt Dancho: <a href="http://www.business-science.io/business/2017/11/28/customer_churn_analysis_keras.html">http://www.business-science.io/business/2017/11/28/customer_churn_analysis_keras.html</a></li>
+<li>JJ Allaire: <a href="https://github.com/rstudio/keras-customer-churn">https://github.com/rstudio/keras-customer-churn</a></li>
+<li>Susan Li: <a href="https://towardsdatascience.com/predict-customer-churn-with-r-9e62357d47b4">https://towardsdatascience.com/predict-customer-churn-with-r-9e62357d47b4</a></li>
+<li>John Sullivan: <a href="https://jtsulliv.github.io/churn-eda/">https://jtsulliv.github.io/churn-eda/</a></li>
+</ul>
+<h1 id="setup">Setup</h1>
+<p>All analyses are done in R using RStudio. For detailed session information including R version, operating system and package versions, see the <code>sessionInfo()</code> output at the end of this document.</p>
+<p>All figures are produced with ggplot2.</p>
+<ul>
+<li>Libraries</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}"># Load libraries
+library(tidyverse) # for tidy data analysis
+library(readr)     # for fast reading of input files
+library(caret)     # for convenient splitting
+library(mice)      # mice package for Multivariate Imputation by Chained Equations (MICE)
+library(keras)     # for neural nets
+library(lime)      # for explaining neural nets
+library(rsample)   # for splitting training and test data
+library(recipes)   # for preprocessing
+library(yardstick) # for evaluation
+library(ggthemes)  # for additional plotting themes
+library(corrplot)  # for correlation
+theme_set(theme_minimal())
+</code></pre><pre><code class="language-{r" data-lang="{r"># Install Keras if you have not installed it before
+# follow instructions if you haven't installed TensorFlow
+install_keras()
+</code></pre><!-- raw HTML omitted -->
+<h1 id="data-preparation">Data preparation</h1>
+<h2 id="the-dataset">The dataset</h2>
+<p>The Telco Customer Churn data set is the same one that Matt Dancho used in his post (see above). It was downloaded from <a href="https://www.ibm.com/communities/analytics/watson-analytics-blog/predictive-insights-in-the-telco-customer-churn-data-set/">IBM Watson</a></p>
+<pre><code class="language-{r" data-lang="{r">churn_data_raw &lt;- read_csv(&quot;/Users/shiringlander/Documents/Github/predictive_analytics/Datasets/WA_Fn-UseC_-Telco-Customer-Churn.csv&quot;)
+</code></pre><pre><code class="language-{r" data-lang="{r">churn_data_raw &lt;- read_csv(&quot;WA_Fn-UseC_-Telco-Customer-Churn.csv&quot;)
+</code></pre><pre><code class="language-{r}" data-lang="{r}">glimpse(churn_data_raw)
+</code></pre><h3 id="eda">EDA</h3>
+<ul>
+<li>Proportion of churn</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">churn_data_raw %&gt;%
+  count(Churn)
+</code></pre><ul>
+<li>Plot categorical features</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">churn_data_raw %&gt;%
+  mutate(SeniorCitizen = as.character(SeniorCitizen)) %&gt;%
+  select(-customerID) %&gt;%
+  select_if(is.character) %&gt;%
+  select(Churn, everything()) %&gt;%
+  gather(x, y, gender:PaymentMethod) %&gt;%
+  count(Churn, x, y) %&gt;%
+  ggplot(aes(x = y, y = n, fill = Churn, color = Churn)) +
+    facet_wrap(~ x, ncol = 4, scales = &quot;free&quot;) +
+    geom_bar(stat = &quot;identity&quot;, alpha = 0.5) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          legend.position = &quot;top&quot;) +
+    scale_color_tableau() +
+    scale_fill_tableau()
+</code></pre><ul>
+<li>Plot numerical features</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">churn_data_raw %&gt;%
+  select(-customerID) %&gt;%
+  #select_if(is.numeric) %&gt;%
+  select(Churn, MonthlyCharges, tenure, TotalCharges) %&gt;%
+  gather(x, y, MonthlyCharges:TotalCharges) %&gt;%
+  ggplot(aes(x = y, fill = Churn, color = Churn)) +
+    facet_wrap(~ x, ncol = 3, scales = &quot;free&quot;) +
+    geom_density(alpha = 0.5) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          legend.position = &quot;top&quot;) +
+    scale_color_tableau() +
+    scale_fill_tableau()
+</code></pre><ul>
+<li>Remove customer ID as it doesn&rsquo;t provide information</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">churn_data &lt;- churn_data_raw %&gt;%
+  select(-customerID)
+</code></pre><h3 id="dealing-with-missing-values">Dealing with missing values</h3>
+<ul>
+<li>Pattern of missing data</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">md.pattern(churn_data, plot = FALSE)
+</code></pre><ul>
+<li>Option 1: impute missing data =&gt; NOT done here!</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">imp &lt;- mice(data = churn_data,  print = FALSE)
+train_data_impute &lt;- complete(imp, &quot;long&quot;)
+</code></pre><ul>
+<li>Option 2: drop missing data =&gt; done here because not too much information is lost by removing it</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">churn_data &lt;- churn_data %&gt;%
+  drop_na()
+</code></pre><h2 id="training-and-test-split">Training and test split</h2>
+<ul>
+<li>Partition data into training and test set</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">set.seed(42)
+index &lt;- createDataPartition(churn_data$Churn, p = 0.7, list = FALSE)
+</code></pre><ul>
+<li>Partition test set again into validation and test set</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">train_data &lt;- churn_data[index, ]
+test_data  &lt;- churn_data[-index, ]
+index2 &lt;- createDataPartition(test_data$Churn, p = 0.5, list = FALSE)
+valid_data &lt;- test_data[-index2, ]
+test_data &lt;- test_data[index2, ]
+</code></pre><pre><code class="language-{r}" data-lang="{r}">nrow(train_data)
+nrow(valid_data)
+nrow(test_data)
+</code></pre><h2 id="pre-processing">Pre-Processing</h2>
+<ul>
+<li>Create recipe for preprocessing</li>
+</ul>
+<blockquote>
+<p>A recipe is a description of what steps should be applied to a data set in order to get it ready for data analysis.</p>
+</blockquote>
+<pre><code class="language-{r}" data-lang="{r}">recipe_churn &lt;- recipe(Churn ~ ., train_data) %&gt;%
+  step_dummy(all_nominal(), -all_outcomes()) %&gt;%
+  step_center(all_predictors(), -all_outcomes()) %&gt;%
+  step_scale(all_predictors(), -all_outcomes()) %&gt;%
+  prep(data = train_data)
+</code></pre><ul>
+<li>Apply recipe to three datasets</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">train_data &lt;- bake(recipe_churn, new_data = train_data) %&gt;%
+  select(Churn, everything())
+valid_data &lt;- bake(recipe_churn, new_data = valid_data) %&gt;%
+  select(Churn, everything())
+test_data &lt;- bake(recipe_churn, new_data = test_data) %&gt;%
+  select(Churn, everything())
+</code></pre><ul>
+<li>For Keras create response variable as one-hot encoded matrix</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">train_y_drop &lt;- to_categorical(as.integer(as.factor(train_data$Churn)) - 1, 2)
+colnames(train_y_drop) &lt;- c(&quot;No&quot;, &quot;Yes&quot;)
+valid_y_drop &lt;- to_categorical(as.integer(as.factor(valid_data$Churn)) - 1, 2)
+colnames(valid_y_drop) &lt;- c(&quot;No&quot;, &quot;Yes&quot;)
+test_y_drop &lt;- to_categorical(as.integer(as.factor(test_data$Churn)) - 1, 2)
+colnames(test_y_drop) &lt;- c(&quot;No&quot;, &quot;Yes&quot;)
+</code></pre><ul>
+<li>Because we want to train on a binary outcome, we can delete the &ldquo;No&rdquo; column</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}"># if training with binary crossentropy
+train_y_drop &lt;- train_y_drop[, 2, drop = FALSE]
+head(train_y_drop)
+valid_y_drop &lt;- valid_y_drop[, 2, drop = FALSE]
+test_y_drop &lt;- test_y_drop[, 2, drop = FALSE]
+</code></pre><ul>
+<li>Remove response variable from preprocessed data (for Keras)</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">train_data_bk &lt;- select(train_data, -Churn)
+head(train_data_bk)
+valid_data_bk &lt;- select(valid_data, -Churn)
+test_data_bk &lt;- select(test_data, -Churn)
+</code></pre><ul>
+<li>Alternative to above, to convert response variable into numeric format where 1 = Yes and 0 = No</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">train_data$Churn &lt;- ifelse(train_data$Churn == &quot;Yes&quot;, 1, 0)
+valid_data$Churn &lt;- ifelse(valid_data$Churn == &quot;Yes&quot;, 1, 0)
+test_data$Churn &lt;- ifelse(test_data$Churn == &quot;Yes&quot;, 1, 0)
+</code></pre><pre><code class="language-{r" data-lang="{r"># alternative - not run
+train_data_impute_bk &lt;- bake(recipe_churn, newdata = train_data_impute) %&gt;%
+  select(Churn, everything())
+train_data_impute_bk &lt;- cbind(train_data_impute$.imp, train_data_impute_bk)
+</code></pre><h2 id="modeling-with-keras">Modeling with Keras</h2>
+<ul>
+<li>Define a simple MLP</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">model_keras &lt;- keras_model_sequential()
+model_keras %&gt;% 
+  layer_dense(units = 32, kernel_initializer = &quot;uniform&quot;, activation = &quot;relu&quot;, 
+              input_shape = ncol(train_data_bk)) %&gt;% 
+  layer_dropout(rate = 0.2) %&gt;%
+  
+  layer_dense(units = 16, kernel_initializer = &quot;uniform&quot;, activation = &quot;relu&quot;) %&gt;% 
+  layer_dropout(rate = 0.2) %&gt;%
+  
+  layer_dense(units = 8, kernel_initializer = &quot;uniform&quot;, activation = &quot;relu&quot;) %&gt;% 
+  layer_dropout(rate = 0.2) %&gt;%
+  layer_dense(units = 1,
+              kernel_initializer = &quot;uniform&quot;, activation = &quot;sigmoid&quot;) %&gt;%
+  
+  compile(
+        optimizer = 'adamax',
+        loss      = 'binary_crossentropy',
+        metrics   = c(&quot;binary_accuracy&quot;, &quot;mse&quot;)
+    )
+summary(model_keras)
+</code></pre><ul>
+<li>Fit model (we could have used validation split on the trainings data instead of creating a validation set =&gt; see #)</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">fit_keras &lt;- fit(model_keras, 
+    x = as.matrix(train_data_bk), 
+    y = train_y_drop,
+    batch_size = 32, 
+    epochs = 20,
+    #validation_split = 0.30,
+    validation_data = list(as.matrix(valid_data_bk), valid_y_drop),
+    verbose = 2
+    )
+</code></pre><ul>
+<li>Plot Keras training results</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">plot(fit_keras) +
+  scale_color_tableau() +
+  scale_fill_tableau()
+</code></pre><h2 id="evaluation">Evaluation</h2>
+<ul>
+<li>Predict classes and probabilities</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">pred_classes_test &lt;- predict_classes(object = model_keras, x = as.matrix(test_data_bk))
+pred_proba_test  &lt;- predict_proba(object = model_keras, x = as.matrix(test_data_bk))
+</code></pre><ul>
+<li>Create results table</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">test_results &lt;- tibble(
+  actual_yes = as.factor(as.vector(test_y_drop)),
+  pred_classes_test = as.factor(as.vector(pred_classes_test)),
+  Yes = as.vector(pred_proba_test), 
+  No = 1 - as.vector(pred_proba_test))
+head(test_results)
+</code></pre><ul>
+<li>Calculate confusion matrix</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">test_results %&gt;% 
+  conf_mat(actual_yes, pred_classes_test)
+</code></pre><ul>
+<li>Calculate metrics</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">test_results %&gt;% 
+  metrics(actual_yes, pred_classes_test)
+</code></pre><ul>
+<li>Are under the ROC curve</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">test_results %&gt;% 
+  roc_auc(actual_yes, Yes)
+</code></pre><ul>
+<li>Precision and recall</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">tibble(
+    precision = test_results %&gt;% yardstick::precision(actual_yes, pred_classes_test) %&gt;% select(.estimate) %&gt;% as.numeric(),
+    recall    = test_results %&gt;% yardstick::recall(actual_yes, pred_classes_test) %&gt;% select(.estimate) %&gt;% as.numeric()
+)
+</code></pre><ul>
+<li>F1-Statistic</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">test_results %&gt;% yardstick::f_meas(actual_yes, pred_classes_test, beta = 1)
+</code></pre><h2 id="h2o">H2O</h2>
+<p>Shows an alternative to Keras!</p>
+<ul>
+<li>Initialise H2O instance and convert data to h2o frame</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">library(h2o)
+h2o.init(nthreads = -1)
+h2o.no_progress()
+train_hf &lt;- as.h2o(train_data)
+valid_hf &lt;- as.h2o(valid_data)
+test_hf &lt;- as.h2o(test_data)
+response &lt;- &quot;Churn&quot;
+features &lt;- setdiff(colnames(train_hf), response)
+</code></pre><pre><code class="language-{r" data-lang="{r"># For binary classification, response should be a factor
+train_hf[, response] &lt;- as.factor(train_hf[, response])
+valid_hf[, response] &lt;- as.factor(valid_hf[, response])
+test_hf[, response] &lt;- as.factor(test_hf[, response])
+</code></pre><pre><code class="language-{r" data-lang="{r">summary(train_hf$Churn, exact_quantiles = TRUE)
+summary(valid_hf$Churn, exact_quantiles = TRUE)
+summary(test_hf$Churn, exact_quantiles = TRUE)
+</code></pre><ul>
+<li>Train model with <a href="http://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html">AutoML</a>.</li>
+</ul>
+<blockquote>
+<p>&ldquo;During model training, you might find that the majority of your data belongs in a single class. For example, consider a binary classification model that has 100 rows, with 80 rows labeled as class 1 and the remaining 20 rows labeled as class 2. This is a common scenario, given that machine learning attempts to predict class 1 with the highest accuracy. It can also be an example of an imbalanced dataset, in this case, with a ratio of 4:1.
+The balance_classes option can be used to balance the class distribution. When enabled, H2O will either undersample the majority classes or oversample the minority classes. Note that the resulting model will also correct the final probabilities (“undo the sampling”) using a monotonic transform, so the predicted probabilities of the first model will differ from a second model. However, because AUC only cares about ordering, it won’t be affected.
+If this option is enabled, then you can also specify a value for the class_sampling_factors and max_after_balance_size options.&rdquo;
+<a href="http://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/algo-params/balance_classes.html">http://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/algo-params/balance_classes.html</a></p>
+</blockquote>
+<pre><code class="language-{r" data-lang="{r">aml &lt;- h2o.automl(x = features, 
+                  y = response,
+                  training_frame = train_hf,
+                  validation_frame = valid_hf,
+                  balance_classes = TRUE,
+                  max_runtime_secs = 3600)
+# View the AutoML Leaderboard
+lb &lt;- aml@leaderboard
+best_model &lt;- aml@leader
+h2o.saveModel(best_model, &quot;/Users/shiringlander/Documents/Github/Data&quot;)
+</code></pre><pre><code class="language-{r" data-lang="{r">best_model &lt;- h2o.loadModel(&quot;/Users/shiringlander/Documents/Github/Data/StackedEnsemble_AllModels_0_AutoML_20181212_094118&quot;)
+</code></pre><ul>
+<li>Prediction</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">pred &lt;- h2o.predict(best_model, test_hf[, -1])
+</code></pre><ul>
+<li>Mean per class error</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">h2o.mean_per_class_error(best_model, train = TRUE, valid = TRUE, xval = TRUE)
+</code></pre><ul>
+<li>Confusion matrix on validation data</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">h2o.confusionMatrix(best_model, valid = TRUE)
+</code></pre><pre><code class="language-{r" data-lang="{r">h2o.auc(best_model, train = TRUE)
+h2o.auc(best_model, valid = TRUE)
+h2o.auc(best_model, xval = TRUE)
+</code></pre><ul>
+<li>Performance and confusion matrix on test data</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">perf &lt;- h2o.performance(best_model, test_hf)
+h2o.confusionMatrix(perf)
+</code></pre><ul>
+<li>Plot performance</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">plot(perf)
+</code></pre><ul>
+<li>More performance metrics extracted</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">h2o.logloss(perf)
+h2o.mse(perf)
+h2o.auc(perf)
+metrics &lt;- as.data.frame(h2o.metric(perf))
+head(metrics)
+</code></pre><ul>
+<li>Plot performance metrics</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">metrics %&gt;%
+  gather(x, y, f1:tpr) %&gt;%
+  ggplot(aes(x = threshold, y = y, group = x)) +
+    facet_wrap(~ x, ncol = 2, scales = &quot;free&quot;) +
+    geom_line()
+</code></pre><ul>
+<li>Examine prediction thresholds</li>
+</ul>
+<pre><code class="language-{r" data-lang="{r">threshold &lt;- metrics[order(-metrics$accuracy), &quot;threshold&quot;][1]
+finalRf_predictions &lt;- data.frame(actual = as.vector(test_hf$Churn), 
+                                  as.data.frame(h2o.predict(object = best_model, 
+                                                            newdata = test_hf)))
+head(finalRf_predictions)
+</code></pre><pre><code class="language-{r" data-lang="{r">finalRf_predictions$accurate &lt;- ifelse(finalRf_predictions$actual == 
+                                         finalRf_predictions$predict, &quot;ja&quot;, &quot;nein&quot;)
+finalRf_predictions$predict_stringent &lt;- ifelse(finalRf_predictions$p1 &gt; threshold, 1, 
+                                                ifelse(finalRf_predictions$p0 &gt; threshold, 0, &quot;unsicher&quot;))
+finalRf_predictions$accurate_stringent &lt;- ifelse(finalRf_predictions$actual == 
+                                                   finalRf_predictions$predict_stringent, &quot;ja&quot;, 
+                                       ifelse(finalRf_predictions$predict_stringent == 
+                                                &quot;unsicher&quot;, &quot;unsicher&quot;, &quot;nein&quot;))
+finalRf_predictions %&gt;%
+  group_by(actual, predict) %&gt;%
+  dplyr::summarise(n = n())
+finalRf_predictions %&gt;%
+  group_by(actual, predict_stringent) %&gt;%
+  dplyr::summarise(n = n())
+</code></pre><pre><code class="language-{r" data-lang="{r">finalRf_predictions %&gt;%
+  gather(x, y, accurate, accurate_stringent) %&gt;%
+  mutate(x = ifelse(x == &quot;accurate&quot;, &quot;Default Schwelle: 0.5&quot;, 
+                    paste(&quot;Angepasste Schwelle:&quot;, round(threshold, digits = 2)))) %&gt;%
+  ggplot(aes(x = actual, fill = y)) +
+    facet_grid(~ x) +
+    geom_bar(position = &quot;dodge&quot;) +
+    scale_fill_tableau()
+</code></pre><pre><code class="language-{r}" data-lang="{r}">df &lt;- finalRf_predictions[, c(1, 3, 4)]
+thresholds &lt;- seq(from = 0, to = 1, by = 0.1)
+prop_table &lt;- data.frame(threshold = thresholds, 
+                         prop_p0_true = NA, prop_p0_false = NA,
+                         prop_p1_true = NA, prop_p1_false = NA)
+for (threshold in thresholds) {
+  pred_1 &lt;- ifelse(df$p1 &gt; threshold, 1, 0)
+  pred_1_t &lt;- ifelse(pred_1 == df$actual, TRUE, FALSE)
+  
+  group &lt;- data.frame(df, 
+                      &quot;pred_true&quot; = pred_1_t) %&gt;%
+    group_by(actual, pred_true) %&gt;%
+    dplyr::summarise(n = n())
+  
+  group_p0 &lt;- filter(group, actual == &quot;0&quot;)
+  
+  prop_p0_t &lt;- sum(filter(group_p0, pred_true == TRUE)$n) / sum(group_p0$n)
+  prop_p0_f &lt;- sum(filter(group_p0, pred_true == FALSE)$n) / sum(group_p0$n)
+  prop_table[prop_table$threshold == threshold, &quot;prop_p0_true&quot;] &lt;- prop_p0_t
+  prop_table[prop_table$threshold == threshold, &quot;prop_p0_false&quot;] &lt;- prop_p0_f
+  
+  group_p1 &lt;- filter(group, actual == &quot;1&quot;)
+  
+  prop_p1_t &lt;- sum(filter(group_p1, pred_true == TRUE)$n) / sum(group_p1$n)
+  prop_p1_f &lt;- sum(filter(group_p1, pred_true == FALSE)$n) / sum(group_p1$n)
+  prop_table[prop_table$threshold == threshold, &quot;prop_p1_true&quot;] &lt;- prop_p1_t
+  prop_table[prop_table$threshold == threshold, &quot;prop_p1_false&quot;] &lt;- prop_p1_f
+}
+</code></pre><pre><code class="language-{r" data-lang="{r">prop_table %&gt;%
+  gather(x, y, prop_p0_true, prop_p1_true) %&gt;%
+  rename(Schwellenwert = threshold) %&gt;%
+  mutate(x = ifelse(x == &quot;prop_p0_true&quot;, &quot;prop true p0&quot;,
+         &quot;prop true p1&quot;)) %&gt;%
+  ggplot(aes(x = Schwellenwert, y = y, color = x)) +
+    geom_point() +
+    geom_line() +
+    scale_color_tableau()
+</code></pre><h3 id="costrevenue-calculation">Cost/revenue calculation</h3>
+<p>Let&rsquo;s assume that</p>
+<ol>
+<li>a marketing campaign + employee time will cost the company 1000€ per year for every customer that is included in the campaign.</li>
+<li>the annual average revenue per customer is 2000€ (in more complex scenarios customers could be further divided into revenue groups to calculate how &ldquo;valuable&rdquo; they are and how harmful loosing them would be)</li>
+<li>investing into unnecessary marketing doesn&rsquo;t cause churn by itself (i.e. a customer who isn&rsquo;t going to churn isn&rsquo;t reacting negatively to the add campaign - which could happen in more complex scenarios).</li>
+<li>without a customer churn model the company would target half of their customer (by chance) for ad-campaigns</li>
+<li>without a customer churn model the company would lose about 25% of their customers to churn</li>
+</ol>
+<p>This would mean that compared to no intervention we would have</p>
+<ul>
+<li>prop_p0_true == customers who were correctly predicted to not churn did not cost anything (no marketing money was spent): +/-0€</li>
+<li>prop_p0_false == customers that did not churn who are predicted to churn will be an empty investment: +/-0€ - 1500€</li>
+<li>prop_p1_false == customer that were predicted to stay but churned: -2000€</li>
+<li>prop_p1_true == customers that were correctly predicted to churn:
+<ul>
+<li>let&rsquo;s say 100% of those could be kept by investing into marketing: +2000€ -1500€</li>
+<li>let&rsquo;s say 50% could be kept by investing into marketing: +2000€ * 0.5 -1500€</li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>Let&rsquo;s play around with some values:</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}"># Baseline
+revenue &lt;- 2000
+cost &lt;- 1000
+customers_churn &lt;- filter(test_data, Churn == 1)
+customers_churn_n &lt;- nrow(customers_churn)
+customers_no_churn &lt;- filter(filter(test_data, Churn == 0))
+customers_no_churn_n &lt;- nrow(customers_no_churn)
+customers &lt;- customers_churn_n + customers_no_churn_n
+ad_target_rate &lt;- 0.5
+ad_cost_default &lt;- customers * ad_target_rate * cost
+churn_rate_default &lt;- customers_churn_n / customers_no_churn_n
+ann_revenue_default &lt;- customers_no_churn_n * revenue
+net_win_default &lt;- ann_revenue_default - ad_cost_default
+net_win_default
+</code></pre><ul>
+<li>How much revenue can we gain from predicting customer churn (assuming conversionr rate of 0.7):</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">conversion &lt;- 0.7
+net_win_table &lt;- prop_table %&gt;%
+  mutate(prop_p0_true_X = prop_p0_true * customers_no_churn_n * revenue,
+         prop_p0_false_X = prop_p0_false * customers_no_churn_n * (revenue -cost),
+         prop_p1_false_X = prop_p1_false * customers_churn_n * 0,
+         prop_p1_true_X = prop_p1_true * customers_churn_n * ((revenue * conversion) - cost)) %&gt;%
+  group_by(threshold) %&gt;%
+  summarise(net_win = sum(prop_p0_true_X + prop_p0_false_X + prop_p1_false_X + prop_p1_true_X),
+            net_win_compared = net_win - net_win_default) %&gt;%
+  arrange(-net_win_compared)
+net_win_table
+</code></pre><h2 id="lime">LIME</h2>
+<ul>
+<li>Explaining predictions</li>
+</ul>
+<pre><code class="language-{r}" data-lang="{r}">Xtrain &lt;- as.data.frame(train_hf)
+Xtest &lt;- as.data.frame(test_hf)
+# run lime() on training set
+explainer &lt;- lime::lime(x = Xtrain, 
+                        model = best_model)
+# run explain() on the explainer
+explanation &lt;- lime::explain(x = Xtest[1:9, ], 
+                             explainer = explainer, 
+                             n_labels = 1,
+                             n_features = 4,
+                             kernel_width = 0.5)
+</code></pre><pre><code class="language-{r" data-lang="{r">plot_explanations(explanation)
+</code></pre><pre><code class="language-{r" data-lang="{r">explanation %&gt;%
+  filter(feature != &quot;Churn&quot;) %&gt;%
+  plot_explanations()
+</code></pre><pre><code class="language-{r" data-lang="{r">explanation %&gt;%
+  plot_features(ncol = 3)
+</code></pre><pre><code class="language-{r" data-lang="{r">explanation %&gt;%
+  filter(feature != &quot;Churn&quot;) %&gt;%
+  plot_features(ncol = 3)
+</code></pre><hr>
+<pre><code class="language-{r}" data-lang="{r}">sessionInfo()
+</code></pre>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/r/">R</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/machine-learning/">machine learning</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/predictive-analytics/">predictive analytics</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/customer-churn/">customer churn</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/hello-r-markdown/" data-tooltip="Hello R Markdown">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=/2018/12/customer_churn_code/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=/2018/12/customer_churn_code/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=/2018/12/customer_churn_code/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2020 Mohammed Hafrate. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/hello-r-markdown/" data-tooltip="Hello R Markdown">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=/2018/12/customer_churn_code/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=/2018/12/customer_churn_code/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=/2018/12/customer_churn_code/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=%2F2018%2F12%2Fcustomer_churn_code%2F">
+          <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=%2F2018%2F12%2Fcustomer_churn_code%2F">
+          <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=%2F2018%2F12%2Fcustomer_churn_code%2F">
+          <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/1c2527915ec7df269dcf5b55c7c0ae5a?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Mohammed Hafrate</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Data Lover
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Maroc
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = '\/2018\/12\/customer_churn_code\/';
+          
+            this.page.identifier = '\/2018\/12\/customer_churn_code\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+
