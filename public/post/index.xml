@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Hugo tranquilpeak theme</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 12 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 05 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Churn Prediction</title>
+      <link>/2020/11/churn-prediction/</link>
+      <pubDate>Thu, 05 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/11/churn-prediction/</guid>
+      <description>Le churn rate ou taux d’attrition est un indicateur qui permet de mesurer le phénomène de perte de clientèle ou d’abonnés.Le churn rate ou taux d’attrition est le ratio (nombre de clients perdus / nombre de clients total) mesuré sur une période donnée qui est le plus souvent l’année.
+Au vu de l’impact de la fidélité des clients sur la rentabilité de l’entreprise, le taux d’attrition est un indicateur dont le suivi est particulièrement important.</description>
+    </item>
     
     <item>
       <title>Code for case study - Customer Churn with Keras/TensorFlow and H2O</title>

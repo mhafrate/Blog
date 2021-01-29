@@ -14,8 +14,8 @@
 
 baseURL = "/"
 languageCode = "en-us"
-defaultContentLanguage = "en-us"
-title = "Hugo tranquilpeak theme"
+defaultContentLanguage = "fr-fr"
+title = "Hafratium"
 theme = "hugo-tranquilpeak-theme"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 disqusShortname = "hugo-tranquilpeak-theme"
